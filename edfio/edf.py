@@ -964,9 +964,7 @@ class _Base(Generic[_Signal]):
                 keep_all_annotations=keep_all_annotations,
             )
         else:
-            start_index = start * signal.sampling_frequency
-            stop_index = stop * signal.sampling_frequency
-            signal._digital = signal.digital[int(start_index) : int(stop_index)]  # type: ignore[assignment]
+            signal._digital = signal.get_digital_slice(start, stop)
             return signal
 
     def slice_between_seconds(
@@ -999,7 +997,6 @@ class _Base(Generic[_Signal]):
         self._verify_seconds_coincide_with_sample_time(stop)
         self._set_num_data_records(_calculate_num_data_records(stop - start, self.data_record_duration))
             
-        import pdb; pdb.set_trace()
         if n_jobs == 1:
             signals: list[_Signal] = []
             for signal in self._signals:
